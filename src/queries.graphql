@@ -1,0 +1,85 @@
+fragment VideoListingFields on Video {
+  id
+  title
+  media {
+    isAccepted
+  }
+  thumbnailPhoto {
+    isAccepted
+    resolvedUrls
+    storageBag {
+      id
+    }
+  }
+  language
+  orionLanguage
+  category {
+    id
+    name
+    isSupported
+    featuredVideos {
+      id
+    }
+  }
+  nft {
+    id
+    isFeatured
+  }
+  createdAt
+  createdInBlock
+  publishedBeforeJoystream
+  isPublic
+  isCensored
+  isShort
+  isExcluded
+  isExplicit
+  isShortDerived
+  videoRelevance
+  viewsNum
+  reactionsCount
+  channel {
+    id
+    title
+    isPublic
+    isCensored
+    isExcluded
+    avatarPhoto {
+      resolvedUrls
+      storageBag {
+        id
+      }
+    }
+    channelWeight
+  }
+  license {
+    id
+    code
+    customText
+    attribution
+  }
+  ytVideoId
+  includeInHomeFeed
+  commentsCount
+}
+
+query VideoListing(
+  $first: Int!
+  $after: String
+  $orderBy: [VideoOrderByInput!]!
+) {
+  videosConnection(first: $first, after: $after, orderBy: $orderBy) {
+    totalCount
+    edges {
+      cursor
+      node {
+        ...VideoListingFields
+      }
+    }
+    pageInfo {
+      hasPreviousPage
+      hasNextPage
+      startCursor
+      endCursor
+    }
+  }
+}
