@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   VideoListingDocument,
   VideoOrderByInput,
@@ -11,7 +10,8 @@ type UseVideosArgs = {
 };
 
 export function useVideos({ filters }: UseVideosArgs) {
-  const [orderBy, setOrderBy] = useState(VideoOrderByInput.CreatedAtDesc);
+  const orderBy = VideoOrderByInput.CreatedAtDesc;
+  // const [orderBy, setOrderBy] = useState(VideoOrderByInput.CreatedAtDesc);
   const { data, loading, pagination, refetch } = useRelayPaginationQuery(
     VideoListingDocument,
     (variables) => ({

@@ -28,7 +28,8 @@ export function useRelayPaginationQuery<
   }) => QueryHookOptions<NoInfer<TData>, NoInfer<TVariables>>,
   extractResult: (data?: TData) => RData | undefined
 ) {
-  const [pageSize, setPageSize] = useState(10);
+  const pageSize = 10;
+  // const [pageSize, setPageSize] = useState(10);
   const [cursors, setCursors] = useState<(string | undefined)[]>([undefined]);
   const [currentPage, setCurrentPage] = useState(1);
   const [numPages, setNumPages] = useState(1);
