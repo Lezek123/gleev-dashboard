@@ -5,7 +5,6 @@ import { colors, flexCenter } from "../styles";
 export const Placeholder = styled.div`
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
   padding: 5px;
   font-size: 14px;
   ${flexCenter}

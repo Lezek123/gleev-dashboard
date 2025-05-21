@@ -66,12 +66,19 @@ query VideoListing(
   $first: Int!
   $after: String
   $orderBy: [VideoOrderByInput!]!
+  $where: VideoWhereInput
 ) {
-  videosConnection(first: $first, after: $after, orderBy: $orderBy) {
+  videosConnection(
+    first: $first
+    after: $after
+    orderBy: $orderBy
+    where: $where
+  ) {
     totalCount
     edges {
       cursor
       node {
+        id
         ...VideoListingFields
       }
     }
@@ -81,5 +88,13 @@ query VideoListing(
       startCursor
       endCursor
     }
+  }
+}
+
+query VideoCategories {
+  videoCategories {
+    id
+    name
+    isSupported
   }
 }

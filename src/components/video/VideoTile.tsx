@@ -1,29 +1,32 @@
 import styled from "styled-components";
 import Flags from "./Flags";
 import { colors, flexCenter } from "../../styles";
-import { formatDate } from "../../utils";
+import { formatDate, getTimezoneStr } from "../../utils";
 import { knownLicenses } from "../../knownLicenses";
-import {
-  VideoListingFieldsFragment,
-  VideoListingFieldsFragmentDoc,
-} from "../../__generated__/graphql";
+import { VideoListingFieldsFragmentDoc } from "../../__generated__/graphql";
 import {
   useFragment,
   FragmentType,
 } from "../../__generated__/fragment-masking";
 import Asset, { Placeholder } from "../Asset";
+import {
+  isVideoAccessible,
+  isVideoListed,
+} from "../../helpers/video/filtering";
+import { Checkbox } from "semantic-ui-react";
 
 const Container = styled.div`
   display: grid;
   background: ${colors.bg1};
   column-gap: 5px;
   row-gap: 5px;
-  grid-template-columns: auto repeat(7, auto);
+  grid-template-columns: auto repeat(8, auto);
   grid-template-rows: auto auto auto;
   font-size: 12px;
-  width: 1250px;
+  width: 100%;
   padding: 10px;
   color: ${colors.textDefault};
+  line-height: 1.1;
 `;
 
 const ID = styled.div`
@@ -32,8 +35,7 @@ const ID = styled.div`
   grid-column: -2 / -1;
   font-size: 12px;
   font-weight: bold;
-  background: ${colors.bgHighlight};
-  color: ${colors.textInverse};
+  background: ${colors.bg2};
   text-align: center;
 `;
 
@@ -120,41 +122,25 @@ const MetricValue = styled.div`
   font-size: 12px;
 `;
 
-function isVideoAccessible({
-  isCensored,
-  isExcluded,
-  channel,
-}: VideoListingFieldsFragment) {
-  // see: https://github.com/Joystream/gleev/blob/main/packages/atlas/src/config/contentFilter.ts
-  return (
-    !isCensored && !isExcluded && !channel.isCensored && !channel.isExcluded
-    // TODO: Belongs to supported category
-  );
-}
-
-function isVideoListed(video: VideoListingFieldsFragment) {
-  const { isPublic, media, thumbnailPhoto, isShort, isShortDerived, channel } =
-    video;
-  // see: https://github.com/Joystream/gleev/blob/main/packages/atlas/src/config/contentFilter.ts
-  return (
-    isVideoAccessible(video) &&
-    isPublic &&
-    channel.isPublic &&
-    media?.isAccepted &&
-    thumbnailPhoto?.isAccepted &&
-    !isShort &&
-    isShortDerived == null
-  );
-}
+const Actions = styled.div`
+  background: ${colors.bg2};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 
 export type VideoTileProps = {
   video: FragmentType<typeof VideoListingFieldsFragmentDoc>;
+  selected: boolean;
+  onSelectedChange: (id: string, value: boolean) => void;
 };
 
 export function VideoTile(props: VideoTileProps) {
+  const { selected, onSelectedChange } = props;
   const video = useFragment(VideoListingFieldsFragmentDoc, props.video);
   const {
     id,
+    ytVideoId,
     title,
     channel,
     isPublic,
@@ -179,8 +165,10 @@ export function VideoTile(props: VideoTileProps) {
   } = video;
 
   const flags = {
+    isPinned: includeInHomeFeed,
     isAccessible: isVideoAccessible(video),
     isListed: isVideoListed(video),
+    isYoutubeSync: !!ytVideoId,
     hasNft: !!nft?.id,
     isPublic,
     isExcluded,
@@ -218,7 +206,7 @@ export function VideoTile(props: VideoTileProps) {
         </Metrics>
       </ChannelInfo>
       <InfoSection>
-        <InfoHeader>Created (UTC)</InfoHeader>
+        <InfoHeader>Created ({getTimezoneStr()})</InfoHeader>
         <Metrics>
           <MetricName>Joystream</MetricName>
           <MetricValue>{formatDate(createdAt)}</MetricValue>
@@ -299,6 +287,12 @@ export function VideoTile(props: VideoTileProps) {
           "Not provided"
         )}
       </InfoSection>
+      <Actions>
+        <Checkbox
+          checked={selected}
+          onChange={(_, { checked }) => onSelectedChange(video.id, !!checked)}
+        />
+      </Actions>
       {/* TODO: Gleev feed position? */}
       {/* TODO: Reports */}
     </Container>

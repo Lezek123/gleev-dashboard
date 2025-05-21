@@ -1,0 +1,23 @@
+mutation ExcludeVideos($ids: [String!]!) {
+  excludeContent(ids: $ids, type: Video) {
+    numberOfEntitiesAffected
+  }
+}
+
+mutation RestoreVideos($ids: [String!]!) {
+  restoreContent(ids: $ids, type: Video) {
+    numberOfEntitiesAffected
+  }
+}
+
+mutation PinVideos($ids: [String!]!) {
+  setOrUnsetPublicFeedVideos(operation: SET, videoIds: $ids) {
+    numberOfEntitiesAffected
+  }
+}
+
+mutation UnpinVideos($ids: [String!]!) {
+  setOrUnsetPublicFeedVideos(operation: UNSET, videoIds: $ids) {
+    numberOfEntitiesAffected
+  }
+}
