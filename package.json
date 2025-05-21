@@ -61,5 +61,11 @@
     "@types/lodash": "^4",
     "@types/react-select": "^5.0.1",
     "madge": "^8.0.0"
+  },
+  "engines": {
+    "node": "^18"
+  },
+  "volta": {
+    "node": "18.20.8"
   }
 }
