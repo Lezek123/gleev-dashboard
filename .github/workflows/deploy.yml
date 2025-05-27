@@ -33,6 +33,7 @@ jobs:
         env:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
           SITE_PATH: ${{ secrets.SITE_PATH }}
         run: |
           RELEASE_PATH="$SITE_PATH/releases/$(date +%Y_%m_%d_%H_%M_%S)"
