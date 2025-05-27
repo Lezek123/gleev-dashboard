@@ -38,6 +38,6 @@ jobs:
         run: |
           RELEASE_PATH="$SITE_PATH/releases/$(date +%Y_%m_%d_%H_%M_%S)"
           ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_PATH"
-          rsync -e 'ssh -p $SSH_PORT' -az --delete ./build/ $SSH_USER@$SSH_HOST:$RELEASE_PATH
+          rsync -e "ssh -p $SSH_PORT" -az --delete ./build/ $SSH_USER@$SSH_HOST:$RELEASE_PATH
           ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "ln -sfn $RELEASE_PATH $SITE_PATH/current"
           echo "✅ Deployed"
