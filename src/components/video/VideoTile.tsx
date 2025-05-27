@@ -15,12 +15,15 @@ import {
 } from "../../helpers/video/filtering";
 import { Checkbox } from "semantic-ui-react";
 
-const Container = styled.div`
+const Container = styled.div<{ withActions?: boolean }>`
   display: grid;
   background: ${colors.bg1};
   column-gap: 5px;
   row-gap: 5px;
-  grid-template-columns: auto repeat(8, auto);
+  grid-template-columns: auto repeat(
+      ${(props) => (props.withActions ? 8 : 7)},
+      auto
+    );
   grid-template-rows: auto auto auto;
   font-size: 12px;
   width: 100%;
@@ -132,11 +135,12 @@ const Actions = styled.div`
 export type VideoTileProps = {
   video: FragmentType<typeof VideoListingFieldsFragmentDoc>;
   selected: boolean;
+  withActions?: boolean;
   onSelectedChange: (id: string, value: boolean) => void;
 };
 
 export function VideoTile(props: VideoTileProps) {
-  const { selected, onSelectedChange } = props;
+  const { selected, onSelectedChange, withActions } = props;
   const video = useFragment(VideoListingFieldsFragmentDoc, props.video);
   const {
     id,
@@ -181,7 +185,7 @@ export function VideoTile(props: VideoTileProps) {
   const licenseData = knownLicenses.find((l) => l.code === license?.code);
 
   return (
-    <Container>
+    <Container withActions={withActions}>
       <ID>{id}</ID>
       {/* TODO: YT video ID? */}
       <Title>{title}</Title>
@@ -287,12 +291,14 @@ export function VideoTile(props: VideoTileProps) {
           "Not provided"
         )}
       </InfoSection>
-      <Actions>
-        <Checkbox
-          checked={selected}
-          onChange={(_, { checked }) => onSelectedChange(video.id, !!checked)}
-        />
-      </Actions>
+      {withActions && (
+        <Actions>
+          <Checkbox
+            checked={selected}
+            onChange={(_, { checked }) => onSelectedChange(video.id, !!checked)}
+          />
+        </Actions>
+      )}
       {/* TODO: Gleev feed position? */}
       {/* TODO: Reports */}
     </Container>

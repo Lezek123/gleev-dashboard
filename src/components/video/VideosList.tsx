@@ -5,8 +5,9 @@ import RelayPagination from "../RelayPagination";
 import { flexCenter } from "../../styles";
 import { VideoListingQuery } from "../../__generated__/graphql";
 import { PaginationInfo } from "../../hooks/useRelayPaginationQuery";
-import { useCallback, useState } from "react";
+import { useCallback, useContext, useState } from "react";
 import VideoActions from "./VideoActions";
+import { AuthContext } from "../../providers/OrionProvider";
 
 type VideosListProps = {
   className?: string;
@@ -29,6 +30,7 @@ function VideosList({
   pagination,
   refetch,
 }: VideosListProps) {
+  const { isAuthenticated } = useContext(AuthContext);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const onActionCompleted = useCallback(() => {
     setSelectedIds([]);
@@ -39,10 +41,12 @@ function VideosList({
     <div className={className}>
       <div>
         <RelayPagination {...pagination} />
-        <VideoActions
-          onActionCompleted={onActionCompleted}
-          selectedIds={selectedIds}
-        />
+        {isAuthenticated && (
+          <VideoActions
+            onActionCompleted={onActionCompleted}
+            selectedIds={selectedIds}
+          />
+        )}
         {loading ? (
           <Placeholder>Loading...</Placeholder>
         ) : data ? (
@@ -52,6 +56,7 @@ function VideosList({
                 key={cursor}
                 video={node}
                 selected={selectedIds.includes(node.id)}
+                withActions={isAuthenticated}
                 onSelectedChange={(id, isSelected) =>
                   setSelectedIds((current) =>
                     isSelected

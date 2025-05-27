@@ -72,4 +72,5 @@ export default styled(SettingsWidget)`
   padding: 10px;
   top: 0;
   right: 0;
+  z-index: 1;
 `;

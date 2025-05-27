@@ -5,7 +5,13 @@ import {
   InMemoryCache,
   NormalizedCacheObject,
 } from "@apollo/client";
-import { PropsWithChildren, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { SettingsContext } from "./SettingsProvider";
 import { getEnv } from "../config";
 
@@ -22,10 +28,17 @@ function createApolloClient(sessionId?: string) {
   });
 }
 
+type AuthInfo = {
+  isAuthenticated: boolean;
+};
+
+export const AuthContext = createContext<AuthInfo>({ isAuthenticated: false });
+
 export const OrionProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const [client, setClient] = useState<ApolloClient<NormalizedCacheObject>>(
     () => createApolloClient()
   );
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const { gleevOperatorKey } = useContext(SettingsContext);
 
   useEffect(() => {
@@ -43,6 +56,7 @@ export const OrionProvider: React.FC<PropsWithChildren> = ({ children }) => {
         .then((r) => {
           if (r.sessionId) {
             setClient(createApolloClient(r.sessionId));
+            setIsAuthenticated(true);
           } else {
             console.error("Missing sessionId in Orion auth response!");
           }
@@ -51,5 +65,11 @@ export const OrionProvider: React.FC<PropsWithChildren> = ({ children }) => {
     }
   }, [gleevOperatorKey]);
 
-  return <ApolloProvider client={client}>{children}</ApolloProvider>;
+  return (
+    <ApolloProvider client={client}>
+      <AuthContext.Provider value={{ isAuthenticated }}>
+        {children}
+      </AuthContext.Provider>
+    </ApolloProvider>
+  );
 };
