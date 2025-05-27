@@ -7,8 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    name: Build
+  deploy:
+    name: Deploy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,21 +23,20 @@ jobs:
         run: yarn gql:compile
       - name: Run build
         run: yarn build
-      - name: Upload build artifacts
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: "build"
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    permissions:
-      pages: write # to deploy to Pages
-      id-token: write # to verify the deployment originates from an appropriate source
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p ${{ secrets.SSH_PORT } -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - name: Rsync build to server and update symlink
+        env:
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SITE_PATH: ${{ secrets.SITE_PATH }}
+        run: |
+          RELEASE_PATH="$SITE_PATH/releases/$(date +%Y_%m_%d_%H_%M_%S)"
+          ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "mkdir -p $RELEASE_PATH"
+          rsync -az --delete ./build/ $SSH_USER@$SSH_HOST:$RELEASE_PATH
+          ssh -p $SSH_PORT $SSH_USER@$SSH_HOST "ln -sfn $RELEASE_PATH $SITE_PATH/current"
+          echo "✅ Deployed"
