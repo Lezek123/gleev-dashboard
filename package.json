@@ -30,6 +30,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "eslint .",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "gql:compile": "graphql-codegen",
@@ -61,6 +62,7 @@
     "@parcel/watcher": "^2.5.1",
     "@types/lodash": "^4",
     "@types/react-select": "^5.0.1",
+    "eslint": "^8",
     "madge": "^8.0.0"
   },
   "engines": {

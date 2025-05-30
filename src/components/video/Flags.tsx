@@ -33,7 +33,7 @@ function Flags({ values, className }: FlagsProps) {
           return null;
         }
         return (
-          <Flag style={{ background: color, color: textColor }}>
+          <Flag key={key} style={{ background: color, color: textColor }}>
             <FlagIcon>{icon}</FlagIcon>
             {name}
           </Flag>

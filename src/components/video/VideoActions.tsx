@@ -82,7 +82,9 @@ function VideoActions({
         <Header size="tiny">Selected videos:</Header>
         <SelectedVideoIds>
           {selectedIds.length ? (
-            selectedIds.map((id) => <SelectedVideoId>{id}</SelectedVideoId>)
+            selectedIds.map((id) => (
+              <SelectedVideoId key={id}>{id}</SelectedVideoId>
+            ))
           ) : (
             <Header size="tiny" color="grey">
               None
