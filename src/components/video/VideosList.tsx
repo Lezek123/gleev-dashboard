@@ -2,12 +2,13 @@ import styled from "styled-components";
 import _ from "lodash";
 import VideoTile from "./VideoTile";
 import RelayPagination from "../RelayPagination";
-import { flexCenter } from "../../styles";
+import { colors, flexCenter } from "../../styles";
 import { VideoListingQuery } from "../../__generated__/graphql";
 import { PaginationInfo } from "../../hooks/useRelayPaginationQuery";
 import { useCallback, useContext, useState } from "react";
 import VideoActions from "./VideoActions";
 import { AuthContext } from "../../providers/OrionProvider";
+import { Loader } from "semantic-ui-react";
 
 type VideosListProps = {
   className?: string;
@@ -21,6 +22,7 @@ const Placeholder = styled.div`
   ${flexCenter}
   height: 200px;
   font-size: 16px;
+  background: ${colors.bg2};
 `;
 
 function VideosList({
@@ -48,8 +50,12 @@ function VideosList({
           />
         )}
         {loading ? (
-          <Placeholder>Loading...</Placeholder>
-        ) : data ? (
+          <Placeholder>
+            <Loader active inline>
+              Loading...
+            </Loader>
+          </Placeholder>
+        ) : data && data.edges.length > 0 ? (
           <>
             {data.edges.map(({ node, cursor }) => (
               <VideoTile
@@ -69,7 +75,7 @@ function VideosList({
             <RelayPagination {...pagination} />
           </>
         ) : (
-          <Placeholder>No results</Placeholder>
+          <Placeholder>No results!</Placeholder>
         )}
       </div>
     </div>

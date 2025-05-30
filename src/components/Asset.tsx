@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { colors, flexCenter } from "../styles";
+import { Loader } from "semantic-ui-react";
 
 export const Placeholder = styled.div`
   width: 100%;
@@ -50,8 +51,13 @@ function Asset({ links, alt, className, emptyText, failedText }: AssetProps) {
         <EmptyPlaceholder>{emptyText || `Missing ${alt}`}</EmptyPlaceholder>
       ) : (
         <>
-          {loading && <LoadingPlaceholder>Loading...</LoadingPlaceholder>}
+          {loading && (
+            <LoadingPlaceholder>
+              <Loader active inline />
+            </LoadingPlaceholder>
+          )}
           <Image
+            key={links[linkIdx]}
             src={links[linkIdx]}
             alt={alt}
             loading={loading}

@@ -17,6 +17,9 @@ function Pagination({
   nextPage,
   prevPage,
 }: PaginationProps) {
+  if (numPages <= 1) {
+    return null;
+  }
   return (
     <div className={className}>
       {currentPage > 1 && (

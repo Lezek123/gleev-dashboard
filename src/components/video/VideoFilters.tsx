@@ -135,33 +135,18 @@ function VideoFilters({
             }
           />
         </FormField>
-        <FormGroup widths={"equal"}>
-          <FormField>
-            <VideoBoolFilters
-              text="Properties"
-              value={filters.flags}
-              onChange={(v) =>
-                setFilters((f) => ({
-                  ...f,
-                  flags: v as Filters["flags"],
-                }))
-              }
-            />
-          </FormField>
-          <FormField>
-            <VideoBoolFilters
-              text="Featuring"
-              icon="star"
-              value={filters.featured}
-              onChange={(v) =>
-                setFilters((f) => ({
-                  ...f,
-                  featured: v as Filters["featured"],
-                }))
-              }
-            />
-          </FormField>
-        </FormGroup>
+        <FormField>
+          <VideoBoolFilters
+            text="Properties"
+            value={filters.flags}
+            onChange={(v) =>
+              setFilters((f) => ({
+                ...f,
+                flags: v as Filters["flags"],
+              }))
+            }
+          />
+        </FormField>
         {/* TODO: License */}
         <FormGroup>
           <FormField width={"12"}>

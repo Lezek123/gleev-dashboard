@@ -3,6 +3,9 @@ import {
   VideoListingFieldsFragment,
   VideoWhereInput,
 } from "../../__generated__/graphql";
+import { Flag } from "./flags";
+
+type FlagFilters = { [F in Flag]: boolean | null };
 
 export type Filters = {
   videoId: string;
@@ -13,23 +16,7 @@ export type Filters = {
   language: string;
   orionLanguage: string;
   categoryId: string;
-  flags: {
-    isAccessible: boolean | null;
-    isListed: boolean | null;
-    hasNFT: boolean | null;
-    isPublic: boolean | null;
-    isExcluded: boolean | null;
-    isCensored: boolean | null;
-    isShort: boolean | null;
-    isShortDerived: boolean | null;
-    isExplicit: boolean | null;
-    isYoutubeSync: boolean | null;
-  };
-  featured: {
-    homeFeed: boolean | null;
-    // inCategory: boolean | null;
-    nft: boolean | null;
-  };
+  flags: FlagFilters;
 };
 
 export const DEFAULT_FILTERS: Filters = {
@@ -44,7 +31,9 @@ export const DEFAULT_FILTERS: Filters = {
   flags: {
     isAccessible: null,
     isListed: null,
-    hasNFT: null,
+    isPinned: null,
+    hasNft: null,
+    isNftFeatured: null,
     isPublic: null,
     isExcluded: null,
     isCensored: null,
@@ -52,11 +41,6 @@ export const DEFAULT_FILTERS: Filters = {
     isShortDerived: null,
     isExplicit: null,
     isYoutubeSync: null,
-  },
-  featured: {
-    homeFeed: null,
-    // inCategory: null,
-    nft: null,
   },
 };
 
@@ -148,7 +132,6 @@ export function parseFilters(filters: Filters): VideoWhereInput {
     language,
     orionLanguage,
     flags,
-    featured,
   } = filters;
 
   const where: VideoWhereInput = {
@@ -163,7 +146,7 @@ export function parseFilters(filters: Filters): VideoWhereInput {
       strFilter(orionLanguage, (v) => ({ orionLanguage_eq: v })),
       isAccessibleFilters(filters.flags.isAccessible),
       isListedFilters(filters.flags.isListed),
-      boolFilter(flags.hasNFT, (v) => ({ nft_isNull: !v })),
+      boolFilter(flags.hasNft, (v) => ({ nft_isNull: !v })),
       boolFilter(flags.isPublic, (v) => ({ isPublic_eq: v })),
       boolFilter(flags.isExcluded, (v) => ({ isExcluded_eq: v })),
       boolFilter(flags.isCensored, (v) => ({ isCensored_eq: v })),
@@ -171,8 +154,8 @@ export function parseFilters(filters: Filters): VideoWhereInput {
       boolFilter(flags.isShortDerived, (v) => ({ isShortDerived_eq: v })),
       boolFilter(flags.isExplicit, (v) => ({ isExplicit_eq: v })),
       boolFilter(flags.isYoutubeSync, (v) => ({ ytVideoId_isNull: !v })),
-      boolFilter(featured.homeFeed, (v) => ({ includeInHomeFeed_eq: v })),
-      boolFilter(featured.nft, (v) => ({ nft: { isFeatured_eq: v } })),
+      boolFilter(flags.isPinned, (v) => ({ includeInHomeFeed_eq: v })),
+      boolFilter(flags.isNftFeatured, (v) => ({ nft: { isFeatured_eq: v } })),
       // TODO: Category featuring
     ].filter((v) => !_.isEmpty(v)),
   };
